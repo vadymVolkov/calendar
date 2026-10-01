@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дневник привычек Telegram — Октябрь</title>
+    <meta name="description" content="Интерактивный трекер привычек для Telegram в стиле ежедневного дневника на Октябрь.">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-icon">📅</div>
+                <div>
+                    <h1 class="brand-title">Дневник привычек</h1>
+                    <p class="brand-subtitle">Интерактивный трекер на Октябрь (Telegram format)</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="btn-copy-telegram" class="btn btn-primary">
+                    <span class="btn-icon">✈️</span> Скопировать для Telegram
+                </button>
+                <button id="btn-add-habit" class="btn btn-secondary">
+                    <span class="btn-icon">➕</span> Добавить привычку
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Dashboard Banner -->
+        <section class="dashboard-stats" id="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper purple">📊</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="stat-total-completed">0 / 279</div>
+                    <div class="stat-label">Выполнено целей за месяц</div>
+                    <div class="stat-progress-bar">
+                        <div class="stat-progress-fill" id="stat-overall-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper green">✅</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="stat-percent">0%</div>
+                    <div class="stat-label">Общая продуктивность</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper blue">🎯</div>
+                <div class="stat-content">
+                    <div class="stat-value" id="stat-active-habits">9</div>
+                    <div class="stat-label">Категорий привычек</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Control Bar & Legend -->
+        <div class="control-bar">
+            <div class="month-badge-wrapper">
+                <div class="month-title">
+                    🍁 Октябрь 
+                    <span class="month-tag">31 день</span>
+                </div>
+            </div>
+            
+            <div class="legend-bar">
+                <span style="font-weight: 600; color: var(--text-primary);">Статусы:</span>
+                <div class="legend-item"><span style="color: #cbd5e1;">⚪</span> Не заполнено</div>
+                <div class="legend-item"><span style="color: #10b981;">✅</span> Выполнено</div>
+                <div class="legend-item"><span style="color: #ef4444;">❌</span> Пропущено</div>
+            </div>
+
+            <div class="quick-actions">
+                <button id="btn-reset-month" class="btn btn-secondary" title="Сбросить все отметки за месяц">
+                    <span class="btn-icon">🔄</span> Сбросить всё в ⚪
+                </button>
+                <button id="btn-restore-defaults" class="btn btn-outline-danger" title="Восстановить стандартный набор привычек">
+                    <span class="btn-icon">🗑️</span> Сбросить настройки
+                </button>
+            </div>
+        </div>
+
+        <!-- Habits Grid Container -->
+        <main class="habits-grid" id="habits-container">
+            <!-- Rendered by JavaScript -->
+        </main>
+    </div>
+
+    <!-- Modal: Add / Edit Habit -->
+    <div class="modal-backdrop" id="modal-habit">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-habit-title">Добавить новую привычку</h3>
+                <button class="modal-close" id="modal-habit-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-habit">
+                    <input type="hidden" id="habit-id">
+                    <div class="form-group" style="margin-bottom: 14px;">
+                        <label class="form-label" for="habit-title">Название привычки</label>
+                        <input type="text" id="habit-title" class="form-input" placeholder="Например: 10 000 шагов" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label class="form-label" for="habit-emoji">Эмодзи</label>
+                        <input type="text" id="habit-emoji" class="form-input" placeholder="🚶" maxlength="8" required>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                        <button type="button" class="btn btn-secondary" id="modal-habit-cancel">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Telegram Preview & Export -->
+    <div class="modal-backdrop" id="modal-telegram">
+        <div class="modal-card" style="max-width: 580px;">
+            <div class="modal-header">
+                <h3 class="modal-title">✈️ Готовый пост для Telegram</h3>
+                <button class="modal-close" id="modal-telegram-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">
+                    Текст отформатирован точно в вашем стиле. Нажмите кнопку «Скопировать», чтобы вставить в Telegram.
+                </p>
+                <div class="telegram-preview-box" id="telegram-text-preview"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px;">
+                    <div style="font-size: 12px; color: var(--text-muted);">Октябрь (с 1 по 31 число)</div>
+                    <button class="btn btn-primary" id="btn-modal-copy">
+                        <span class="btn-icon">📋</span> Скопировать текст
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
